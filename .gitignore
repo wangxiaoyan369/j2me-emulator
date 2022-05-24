@@ -1,0 +1,9 @@
+build/
+config/
+rms/
+out
+.idea
+src/sdl2/sdl_interface
+*.o
+*.so
+*.iml
