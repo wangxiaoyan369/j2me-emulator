@@ -1,7 +1,8 @@
 build/
 config/
 rms/
-out
+out/
+screenshots/
 .idea
 src/sdl2/sdl_interface
 *.o

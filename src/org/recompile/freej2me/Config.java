@@ -44,7 +44,7 @@ public class Config
 	private int width;
 	private int height;
 
-	private ArrayList<String[]> menu;
+	private final ArrayList<String[]> menu;
 	private int menuid = 0;
 	private int itemid = 0;
 
@@ -64,22 +64,18 @@ public class Config
 		lcd = new PlatformImage(width, height);
 		gc = lcd.getGraphics();
 
-		menu = new ArrayList<String[]>();
+		menu = new ArrayList<>();
 		menu.add(new String[]{"Resume Game", "Display Size", "Sound", "Limit FPS", "Phone", "Rotate", "Exit"}); // 0 - Main Menu
 		menu.add(new String[]{"96x65","96x96","104x80","128x128","132x176","128x160","176x208","176x220", "208x208", "240x320", "320x240", "240x400", "360x640", "480x800"}); // 1 - Size
 		menu.add(new String[]{"Quit", "Main Menu"}); // 2 - Restart Notice
 		menu.add(new String[]{"On", "Off"}); // 3 - sound
-		menu.add(new String[]{"Standard", "Nokia", "Siemens","Motorola"}); // 4 - Phone 
-		menu.add(new String[]{"On", "Off"}); // 5 - rotate 
+		menu.add(new String[]{"Standard", "Nokia", "Siemens","Motorola"}); // 4 - Phone
+		menu.add(new String[]{"On", "Off"}); // 5 - rotate
 		menu.add(new String[]{"Auto", "60 - Fast", "30 - Slow", "15 - Turtle"}); // 6 - FPS
 
 
-		onChange = new Runnable()
-		{
-			public void run()
-			{
-				// placeholder
-			}
+		onChange = () -> {
+			// placeholder
 		};
 	}
 

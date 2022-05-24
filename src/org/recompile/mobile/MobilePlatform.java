@@ -101,22 +101,50 @@ public class MobilePlatform {
     }
 
     private void updateKeyState(int key, int val) {
-        int mask = switch (key) {
-            case Mobile.KEY_NUM2 -> GameCanvas.UP_PRESSED;
-            case Mobile.KEY_NUM4 -> GameCanvas.LEFT_PRESSED;
-            case Mobile.KEY_NUM6 -> GameCanvas.RIGHT_PRESSED;
-            case Mobile.KEY_NUM8 -> GameCanvas.DOWN_PRESSED;
-            case Mobile.KEY_NUM5 -> GameCanvas.FIRE_PRESSED;
-            case Mobile.KEY_NUM1 -> GameCanvas.GAME_A_PRESSED;
-            case Mobile.KEY_NUM3 -> GameCanvas.GAME_B_PRESSED;
-            case Mobile.KEY_NUM7 -> GameCanvas.GAME_C_PRESSED;
-            case Mobile.KEY_NUM9 -> GameCanvas.GAME_D_PRESSED;
-            case Mobile.NOKIA_UP -> GameCanvas.UP_PRESSED;
-            case Mobile.NOKIA_LEFT -> GameCanvas.LEFT_PRESSED;
-            case Mobile.NOKIA_RIGHT -> GameCanvas.RIGHT_PRESSED;
-            case Mobile.NOKIA_DOWN -> GameCanvas.DOWN_PRESSED;
-            default -> 0;
-        };
+        int mask;
+        switch (key) {
+            case Mobile.KEY_NUM2:
+                mask = GameCanvas.UP_PRESSED;
+                break;
+            case Mobile.KEY_NUM4:
+                mask = GameCanvas.LEFT_PRESSED;
+                break;
+            case Mobile.KEY_NUM6:
+                mask = GameCanvas.RIGHT_PRESSED;
+                break;
+            case Mobile.KEY_NUM8:
+                mask = GameCanvas.DOWN_PRESSED;
+                break;
+            case Mobile.KEY_NUM5:
+                mask = GameCanvas.FIRE_PRESSED;
+                break;
+            case Mobile.KEY_NUM1:
+                mask = GameCanvas.GAME_A_PRESSED;
+                break;
+            case Mobile.KEY_NUM3:
+                mask = GameCanvas.GAME_B_PRESSED;
+                break;
+            case Mobile.KEY_NUM7:
+                mask = GameCanvas.GAME_C_PRESSED;
+                break;
+            case Mobile.KEY_NUM9:
+                mask = GameCanvas.GAME_D_PRESSED;
+                break;
+            case Mobile.NOKIA_UP:
+                mask = GameCanvas.UP_PRESSED;
+                break;
+            case Mobile.NOKIA_LEFT:
+                mask = GameCanvas.LEFT_PRESSED;
+                break;
+            case Mobile.NOKIA_RIGHT:
+                mask = GameCanvas.RIGHT_PRESSED;
+                break;
+            case Mobile.NOKIA_DOWN:
+                mask = GameCanvas.DOWN_PRESSED;
+                break;
+            default:
+                mask = 0;
+        }
         keyState |= mask;
         keyState ^= mask;
         if (val == 1) {

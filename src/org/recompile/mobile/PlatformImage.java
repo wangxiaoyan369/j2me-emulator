@@ -16,21 +16,14 @@
 */
 package org.recompile.mobile;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.game.Sprite;
-import javax.microedition.lcdui.game.GameCanvas;
-
 import javax.imageio.ImageIO;
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class PlatformImage extends javax.microedition.lcdui.Image
 {

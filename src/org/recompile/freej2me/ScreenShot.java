@@ -16,57 +16,43 @@
 */
 package org.recompile.freej2me;
 
-import org.recompile.mobile.*;
+import org.recompile.mobile.Mobile;
 
-import java.io.File;
-import java.io.InputStream;
 import javax.imageio.ImageIO;
-import java.lang.Exception;
-import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class ScreenShot
-{
-	public static void takeScreenshot(boolean saveToHomeDir)
-	{
-		try
-		{
-			Date date = new Date();
-			String fileName;
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+public class ScreenShot {
+    public static void takeScreenshot(boolean saveToHomeDir) {
+        try {
+            Date date = new Date();
+            String fileName;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
-			if (saveToHomeDir == true)
-			{
-				fileName = System.getProperty("user.home") + "/Pictures/Screenshot from " +
-							dateFormat.format(date) + ".png";
-			}
-			else
-			{
-				String screenshotPath = Mobile.getPlatform().dataPath + "screenshots";
-				try
-				{
-					Files.createDirectories(Paths.get(screenshotPath));
-				}
-				catch (Exception e)
-				{
-					System.out.println("Problem Creating Screenshot Path "+ screenshotPath);
-					System.out.println(e.getMessage());
-				}
-				fileName = screenshotPath + "/Screenshot from " + 
-							dateFormat.format(date) + ".png";
-			}
+            if (saveToHomeDir) {
+                fileName = System.getProperty("user.home") + "/Pictures/Screenshot from " +
+                        dateFormat.format(date) + ".png";
+            } else {
+                String screenshotPath = Mobile.getPlatform().dataPath + "screenshots";
+                try {
+                    Files.createDirectories(Paths.get(screenshotPath));
+                } catch (Exception e) {
+                    System.out.println("Problem Creating Screenshot Path " + screenshotPath);
+                    System.out.println(e.getMessage());
+                }
+                fileName = screenshotPath + "/Screenshot from " +
+                        dateFormat.format(date) + ".png";
+            }
 
-			File outputfile = new File(fileName);
-			ImageIO.write(Mobile.getPlatform().getLCD(), "png", outputfile);
-			System.out.printf("Saved screenshot: %s\n", outputfile.toString());
-		}
-		catch (Exception e)
-		{
-			System.out.println("Error saving screenshot");
-			e.printStackTrace();
-		}
-	}
+            File outputFile = new File(fileName);
+            ImageIO.write(Mobile.getPlatform().getLCD(), "png", outputFile);
+            System.out.printf("Saved screenshot: %s\n", outputFile);
+        } catch (Exception e) {
+            System.out.println("Error saving screenshot");
+            e.printStackTrace();
+        }
+    }
 }

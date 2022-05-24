@@ -40,7 +40,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -52,7 +51,7 @@ public class FreeJ2ME {
     private final Frame main;
     private int lcdWidth;
     private int lcdHeight;
-    private int scaleFactor = 1;
+    private int scaleFactor = 2;
 
     private final LCD lcd;
 
@@ -72,15 +71,15 @@ public class FreeJ2ME {
 
     public FreeJ2ME(String[] args) {
         main = new Frame("FreeJ2ME");
-        main.setSize(480, 640);
+        main.setSize(0, 0);
+        main.setResizable(false);
         main.setBackground(new Color(0, 0, 64));
 
-        InputStream resourceAsStream = main.getClass().getResourceAsStream("/org/recompile/icon.png");
-        if (resourceAsStream == null) {
-            throw new RuntimeException("找不到图标文件");
-        }
         try {
-            main.setIconImage(ImageIO.read(resourceAsStream));
+            InputStream resourceAsStream = main.getClass().getResourceAsStream("/org/recompile/icon.png");
+            if (resourceAsStream != null) {
+                main.setIconImage(ImageIO.read(resourceAsStream));
+            }
         } catch (IOException ignored) {
 
         }
@@ -117,23 +116,15 @@ public class FreeJ2ME {
         main.add(lcd);
 
         config = new Config();
-        config.onChange = new Runnable() {
-            public void run() {
-                settingsChanged();
-            }
-        };
+        config.onChange = this::settingsChanged;
 
-        Mobile.getPlatform().setPainter(new Runnable() {
-            public void run() {
-                lcd.paint(lcd.getGraphics());
-            }
-        });
+        Mobile.getPlatform().setPainter(() -> lcd.paint(lcd.getGraphics()));
 
         lcd.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
                 int keycode = e.getKeyCode();
-                int mobikey = getMobileKey(keycode);
-                int mobikeyN = (mobikey + 64) & 0x7F; //Normalized value for indexing the pressedKeys array
+                int mobiKey = getMobileKey(keycode);
+                int mobiKeyN = (mobiKey + 64) & 0x7F; //Normalized value for indexing the pressedKeys array
 
                 switch (keycode) // Handle emulator control keys
                 {
@@ -156,42 +147,40 @@ public class FreeJ2ME {
                         break;
                 }
 
-                if (mobikey == 0) //Ignore events from keys not mapped to a phone keypad key
-                {
+                if (mobiKey == 0) { //Ignore events from keys not mapped to a phone keypad key
                     return;
                 }
 
                 if (config.isRunning) {
-                    config.keyPressed(mobikey);
+                    config.keyPressed(mobiKey);
                 } else {
-                    if (pressedKeys[mobikeyN] == false) {
-                        //~ System.out.println("keyPressed:  " + Integer.toString(mobikey));
-                        Mobile.getPlatform().keyPressed(mobikey);
+                    if (!pressedKeys[mobiKeyN]) {
+                        //~ System.out.println("keyPressed:  " + Integer.toString(mobiKey));
+                        Mobile.getPlatform().keyPressed(mobiKey);
                     } else {
-                        //~ System.out.println("keyRepeated:  " + Integer.toString(mobikey));
-                        Mobile.getPlatform().keyRepeated(mobikey);
+                        //~ System.out.println("keyRepeated:  " + Integer.toString(mobiKey));
+                        Mobile.getPlatform().keyRepeated(mobiKey);
                     }
                 }
-                pressedKeys[mobikeyN] = true;
+                pressedKeys[mobiKeyN] = true;
 
             }
 
             public void keyReleased(KeyEvent e) {
-                int mobikey = getMobileKey(e.getKeyCode());
-                int mobikeyN = (mobikey + 64) & 0x7F; //Normalized value for indexing the pressedKeys array
+                int mobiKey = getMobileKey(e.getKeyCode());
+                int mobiKeyN = (mobiKey + 64) & 0x7F; //Normalized value for indexing the pressedKeys array
 
-                if (mobikey == 0) //Ignore events from keys not mapped to a phone keypad key
-                {
+                if (mobiKey == 0) { //Ignore events from keys not mapped to a phone keypad key
                     return;
                 }
 
-                pressedKeys[mobikeyN] = false;
+                pressedKeys[mobiKeyN] = false;
 
                 if (config.isRunning) {
-                    config.keyReleased(mobikey);
+                    config.keyReleased(mobiKey);
                 } else {
-                    //~ System.out.println("keyReleased: " + Integer.toString(mobikey));
-                    Mobile.getPlatform().keyReleased(mobikey);
+                    //~ System.out.println("keyReleased: " + Integer.toString(mobiKey));
+                    Mobile.getPlatform().keyReleased(mobiKey);
                 }
             }
 
@@ -238,14 +227,13 @@ public class FreeJ2ME {
 
         if (args.length < 1) {
             FileDialog t = new FileDialog(main, "Open JAR File", FileDialog.LOAD);
-            t.setFilenameFilter(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".jar");
-                }
-            });
+            t.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".jar"));
             t.setVisible(true);
             jarfile = new File(t.getDirectory() + File.separator + t.getFile()).toURI().toString();
+        } else {
+            jarfile = new File(jarfile).toURI().toString();
         }
+
         if (Mobile.getPlatform().loadJar(jarfile)) {
             config.init();
             settingsChanged();
@@ -440,8 +428,8 @@ public class FreeJ2ME {
         xBorder = main.getInsets().left + main.getInsets().right;
         yBorder = main.getInsets().top + main.getInsets().bottom;
 
-        double vw = (main.getWidth() - xBorder) * 1;
-        double vh = (main.getHeight() - yBorder) * 1;
+        double vw = (main.getWidth() - xBorder);
+        double vh = (main.getHeight() - yBorder);
 
         double nw = lcdWidth;
         double nh = lcdHeight;
