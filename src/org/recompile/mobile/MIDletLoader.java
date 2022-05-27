@@ -415,7 +415,7 @@ public class MIDletLoader extends URLClassLoader {
 
             public void visitMethodInsn(int opcode, String owner, String name, String desc) {
                 if (opcode == INVOKEVIRTUAL && name.equals("getResourceAsStream") && owner.equals("java/lang/Class")) {
-                    mv.visitMethodInsn(INVOKESTATIC, "org/recompile/mobile/Mobile", name, "(Ljava/lang/Class;Ljava/lang/String;)Ljava/io/InputStream;");
+                    mv.visitMethodInsn(INVOKESTATIC, Mobile.class.getCanonicalName().replace(".", "/"), name, "(Ljava/lang/Class;Ljava/lang/String;)Ljava/io/InputStream;");
                 } else {
                     mv.visitMethodInsn(opcode, owner, name, desc);
                 }
