@@ -124,6 +124,21 @@ public class MIDletLoader extends URLClassLoader {
         }
     }
 
+    public void stop() {
+        if (mainClass == null || mainInst == null) {
+            return;
+        }
+
+        try {
+            Method stop = mainClass.getDeclaredMethod("destroyApp", boolean.class);
+            stop.setAccessible(true);
+            stop.invoke(mainInst, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Destroy failed: " + e.getMessage());
+        }
+    }
+
     private void loadManifest() {
         String resource = "META-INF/MANIFEST.MF";
         URL url = findResource(resource);

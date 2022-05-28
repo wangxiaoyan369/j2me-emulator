@@ -32,7 +32,6 @@ import java.net.URL;
 public class MobilePlatform {
 
     private PlatformImage lcd;
-    private PlatformGraphics gc;
     public int lcdWidth;
     public int lcdHeight;
 
@@ -49,7 +48,6 @@ public class MobilePlatform {
         lcdHeight = height;
 
         lcd = new PlatformImage(width, height);
-        gc = lcd.getGraphics();
 
         Mobile.setGraphics3D(new Graphics3D());
 
@@ -63,7 +61,6 @@ public class MobilePlatform {
         lcdHeight = height;
 
         lcd = new PlatformImage(width, height);
-        gc = lcd.getGraphics();
     }
 
     public BufferedImage getLCD() {
@@ -178,12 +175,21 @@ public class MobilePlatform {
         }
     }
 
+    public void destroyJar() {
+        try{
+            loader.stop();
+        } catch (Exception e){
+            System.out.println("Error Stop Jar");
+            e.printStackTrace();
+        }
+    }
+
     /*
      ********* Graphics ********
      */
 
     public void flushGraphics(Image img, int x, int y, int width, int height) {
-        gc.flushGraphics(img, x, y, width, height);
+        lcd.getGraphics().flushGraphics(img, x, y, width, height);
 
         painter.run();
 
@@ -191,7 +197,7 @@ public class MobilePlatform {
     }
 
     public void repaint(Image img, int x, int y, int width, int height) {
-        gc.flushGraphics(img, x, y, width, height);
+        lcd.getGraphics().flushGraphics(img, x, y, width, height);
 
         painter.run();
 
