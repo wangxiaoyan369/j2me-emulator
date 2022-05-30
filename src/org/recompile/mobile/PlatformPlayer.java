@@ -216,8 +216,6 @@ public class PlatformPlayer implements Player {
     private class midiPlayer extends AudioPlayer {
         private Sequencer midi;
 
-        
-
         public midiPlayer(InputStream stream) {
             try {
                 midi = MidiSystem.getSequencer();
@@ -244,27 +242,6 @@ public class PlatformPlayer implements Player {
             midi.close();
         }
 
-        public void setLoopCount(int count) {
-            loops = count;
-            midi.setLoopCount(count);
-        }
-
-        public long setMediaTime(long now) {
-            try {
-                midi.setTickPosition(now);
-            } catch (Exception e) {
-            }
-            return now;
-        }
-
-        public long getMediaTime() {
-            return 0;
-        }
-
-        public boolean isRunning() {
-            return midi.isRunning();
-        }
-    }
         public void setLoopCount(int count) {
             midi.setLoopCount(count);
         }
@@ -326,10 +303,6 @@ public class PlatformPlayer implements Player {
             notifyListeners(PlayerListener.STOPPED, time);
         }
 
-        public void setLoopCount(int count) {
-            loops = count;
-            wavClip.loop(count);
-        }
         public void setLoopCount(int count) {
             wavClip.loop(count);
         }
