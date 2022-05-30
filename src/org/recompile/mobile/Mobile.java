@@ -123,8 +123,29 @@ public class Mobile {
     }
 
     public static InputStream getResourceAsStream(Class c, String resource) {
-        return platform.loader.getMIDletResourceAsStream(resource);
+        return platform.loader.getMIDletResourceAsStream(resolveName(c, resource));
     }
+
+    private static String resolveName(Class clazz, String name) {
+        if (name == null) {
+            return name;
+        }
+        if (!name.startsWith("/")) {
+            while (clazz.isArray()) {
+                clazz = clazz.getComponentType();
+            }
+            String baseName = clazz.getName();
+            int index = baseName.lastIndexOf('.');
+            if (index != -1) {
+                name = baseName.substring(0, index).replace('.', '/')
+                        + "/" + name;
+            }
+        } else {
+            name = name.substring(1);
+        }
+        return name;
+    }
+
 
     public static InputStream getMIDletResourceAsStream(String resource) {
         return platform.loader.getMIDletResourceAsStream(resource);

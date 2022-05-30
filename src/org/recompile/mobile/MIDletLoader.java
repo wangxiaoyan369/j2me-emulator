@@ -52,7 +52,7 @@ public class MIDletLoader extends URLClassLoader {
     private HashMap<String, String> properties = new HashMap<String, String>(32);
 
 
-    public MIDletLoader(URL urls[]) {
+    public MIDletLoader(URL[] urls) {
         super(urls);
 
         try {

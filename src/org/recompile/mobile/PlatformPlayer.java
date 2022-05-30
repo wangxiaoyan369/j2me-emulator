@@ -16,24 +16,22 @@
 */
 package org.recompile.mobile;
 
-import java.io.InputStream;
-import java.util.Vector;
+import javax.microedition.media.Control;
+import javax.microedition.media.Player;
+import javax.microedition.media.PlayerListener;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-
-import javax.microedition.media.Player;
-import javax.microedition.media.PlayerListener;
-
-import javax.microedition.media.Control;
+import java.io.InputStream;
+import java.util.Vector;
 
 public class PlatformPlayer implements Player {
 
     private String contentType = "";
 
-    private audioplayer player;
+    private AudioPlayer player;
 
     private int state = Player.UNREALIZED;
 
@@ -47,8 +45,8 @@ public class PlatformPlayer implements Player {
 
         contentType = type;
 
-        if (Mobile.sound == false) {
-            player = new audioplayer();
+        if (!Mobile.sound) {
+            player = new AudioPlayer();
         } else {
             if (type.equals("audio/midi") || type.equals("sp-midi") || type.equals("audio/spmidi")) {
                 player = new midiPlayer(stream);
@@ -57,7 +55,7 @@ public class PlatformPlayer implements Player {
                     player = new wavPlayer(stream);
                 } else {
                     System.out.println("No Player For: " + contentType);
-                    player = new audioplayer();
+                    player = new AudioPlayer();
                 }
             }
         }
@@ -69,7 +67,7 @@ public class PlatformPlayer implements Player {
     }
 
     public PlatformPlayer(String locator) {
-        player = new audioplayer();
+        player = new AudioPlayer();
         listeners = new Vector<PlayerListener>();
         controls = new Control[3];
         System.out.println("Player locator: " + locator);
@@ -87,7 +85,7 @@ public class PlatformPlayer implements Player {
     }
 
     public int getState() {
-        if (player.isRunning() == false) {
+        if (!player.isRunning() ) {
             state = Player.PREFETCHED;
         }
         return state;
@@ -189,7 +187,7 @@ public class PlatformPlayer implements Player {
 
     // Players //
 
-    private class audioplayer {
+    private static class AudioPlayer {
         public void start() {
         }
 
@@ -215,10 +213,10 @@ public class PlatformPlayer implements Player {
         }
     }
 
-    private class midiPlayer extends audioplayer {
+    private class midiPlayer extends AudioPlayer {
         private Sequencer midi;
 
-        private int loops = 0;
+        
 
         public midiPlayer(InputStream stream) {
             try {
@@ -234,7 +232,7 @@ public class PlatformPlayer implements Player {
             midi.setMicrosecondPosition(0);
             midi.start();
             state = Player.STARTED;
-            notifyListeners(PlayerListener.STARTED, new Long(0));
+            notifyListeners(PlayerListener.STARTED, 0L);
         }
 
         public void stop() {
@@ -267,15 +265,35 @@ public class PlatformPlayer implements Player {
             return midi.isRunning();
         }
     }
+        public void setLoopCount(int count) {
+            midi.setLoopCount(count);
+        }
 
-    private class wavPlayer extends audioplayer {
+        public long setMediaTime(long now) {
+            try {
+                midi.setTickPosition(now);
+            } catch (Exception e) {
+            }
+            return now;
+        }
+
+        public long getMediaTime() {
+            return 0;
+        }
+
+        public boolean isRunning() {
+            return midi.isRunning();
+        }
+    }
+
+    private class wavPlayer extends AudioPlayer {
 
         private AudioInputStream wavStream;
         private Clip wavClip;
 
-        private int loops = 0;
+        private Long time = 0L;
 
-        private Long time = new Long(0);
+        
 
         public wavPlayer(InputStream stream) {
             try {
@@ -312,6 +330,9 @@ public class PlatformPlayer implements Player {
             loops = count;
             wavClip.loop(count);
         }
+        public void setLoopCount(int count) {
+            wavClip.loop(count);
+        }
 
         public long setMediaTime(long now) {
             wavClip.setMicrosecondPosition(now);
@@ -329,7 +350,7 @@ public class PlatformPlayer implements Player {
 
     // Controls //
 
-    private class midiControl implements javax.microedition.media.control.MIDIControl {
+    private static class midiControl implements javax.microedition.media.control.MIDIControl {
         public int[] getBankList(boolean custom) {
             return new int[]{};
         }
@@ -372,7 +393,7 @@ public class PlatformPlayer implements Player {
         }
     }
 
-    private class volumeControl implements javax.microedition.media.control.VolumeControl {
+    private static class volumeControl implements javax.microedition.media.control.VolumeControl {
         private int level = 100;
         private boolean muted = false;
 
@@ -394,7 +415,7 @@ public class PlatformPlayer implements Player {
         }
     }
 
-    private class tempoControl implements javax.microedition.media.control.TempoControl {
+    private static class tempoControl implements javax.microedition.media.control.TempoControl {
         int tempo = 5000;
         int rate = 5000;
 
@@ -402,8 +423,8 @@ public class PlatformPlayer implements Player {
             return tempo;
         }
 
-        public int setTempo(int millitempo) {
-            tempo = millitempo;
+        public int setTempo(int milliTempo) {
+            tempo = milliTempo;
             return tempo;
         }
 
@@ -420,8 +441,8 @@ public class PlatformPlayer implements Player {
             return rate;
         }
 
-        public int setRate(int millirate) {
-            rate = millirate;
+        public int setRate(int milliRate) {
+            rate = milliRate;
             return rate;
         }
     }
